@@ -73,23 +73,14 @@ class Tree
   end
 
   def _delete_children(node)
-    # return _delete_child(node, node.left) if node.right.nil?
     return node.left if node.right.nil?
 
     return node.right if node.left.nil?
-
-    # return _delete_child(node, node.right) if node.left.nil?
 
     temp_data = _node_min_value(node.right).data
     node.data = temp_data
     node.right = delete(temp_data, node.right)
   end
-
-  # def _delete_child(node, node_child)
-  #   # temp = node_child
-  #   # node = nil
-  #   node_child# temp
-  # end
 
   def _node_min_value(node)
     current_node = node
