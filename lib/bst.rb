@@ -42,6 +42,16 @@ class Tree
     _insert(node)
   end
 
+  def delete(value, parent_node = @root)
+    return parent_node if parent_node.nil?
+
+    parent_node.right = delete(value, parent_node.right) if value > parent_node.data
+    parent_node.left = delete(value, parent_node.left) if value < parent_node.data
+    return _delete_children(parent_node) if value == parent_node.data
+
+    parent_node
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -51,26 +61,72 @@ class Tree
   private
 
   def _insert(new_node, parent_node = @root)
-    if parent_node.data < new_node.data
-      if parent_node.right.nil?
-        parent_node.right = new_node
-      else
-        _insert(new_node, parent_node.right)
-      end
-    elsif parent_node.left.nil?
-      parent_node.left = new_node
+    if new_node.data > parent_node.data
+      return parent_node.right = new_node if parent_node.right.nil?
+
+      _insert(new_node, parent_node.right)
     else
+      return parent_node.left = new_node if parent_node.left.nil?
+
       _insert(new_node, parent_node.left)
     end
   end
+
+  def _delete_children(node)
+    # return _delete_child(node, node.left) if node.right.nil?
+    return node.left if node.right.nil?
+
+    return node.right if node.left.nil?
+
+    # return _delete_child(node, node.right) if node.left.nil?
+
+    temp_data = _node_min_value(node.right).data
+    node.data = temp_data
+    node.right = delete(temp_data, node.right)
+  end
+
+  # def _delete_child(node, node_child)
+  #   # temp = node_child
+  #   # node = nil
+  #   node_child# temp
+  # end
+
+  def _node_min_value(node)
+    current_node = node
+    current_node = current_node.left until current_node.left.nil?
+    current_node
+  end
 end
 
-# test = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-test = Tree.new
+test = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
+# test = Tree.new
 p = test.find(67)
 puts p
-test.insert(6)
-test.insert(2)
-test.insert(10)
 
 test.pretty_print
+
+test.delete(7)
+test.pretty_print
+
+test.delete(1)
+test.pretty_print
+
+test.delete(8)
+test.pretty_print
+# test.insert(50)
+# test.insert(30)
+# test.insert(20)
+# test.insert(40)
+# test.insert(70)
+# test.insert(60)
+# test.insert(80)
+# test.pretty_print
+
+# test.delete(20)
+# test.pretty_print
+
+# test.delete(30)
+# test.pretty_print
+
+# test.delete(50)
+# test.pretty_print
