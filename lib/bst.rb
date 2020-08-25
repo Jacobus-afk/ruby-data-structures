@@ -52,6 +52,29 @@ class Tree
     parent_node
   end
 
+  def height(node = @root)
+    return 0 if node.nil?
+
+    left_height = height(node.left)
+    right_height = height(node.right)
+
+    return left_height + 1 if left_height > right_height
+
+    return right_height + 1 if left_height <= right_height
+  end
+
+  def level_order
+    queue = [@root]
+    level_order_arr = []
+    until queue.empty?
+      temp = queue.shift
+      level_order_arr.push(temp.data)
+      queue.push(temp.left) unless temp.left.nil?
+      queue.push(temp.right) unless temp.right.nil?
+    end
+    level_order_arr
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -95,6 +118,8 @@ p = test.find(67)
 puts p
 
 test.pretty_print
+puts test.level_order
+puts test.height
 
 test.delete(7)
 test.pretty_print
