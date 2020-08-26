@@ -53,14 +53,27 @@ class Tree
   end
 
   def height(node = @root)
-    return 0 if node.nil?
+    return -1 if node.nil?
 
     left_height = height(node.left)
     right_height = height(node.right)
 
     return left_height + 1 if left_height > right_height
 
-    return right_height + 1 if left_height <= right_height
+    right_height + 1
+  end
+
+  def depth(node_search)
+    search_val = node_search.data
+    node = @root
+    depth_val = 0
+    until node.data == search_val || node.nil?
+      node = node.left if search_val < node.data
+      node = node.right if search_val > node.data
+      depth_val += 1
+    end
+    return depth_val unless node.nil?
+    # return _depth(node_search.data, @root) if find(node_search.data)
   end
 
   def level_order
@@ -75,6 +88,19 @@ class Tree
     level_order_arr
   end
 
+  def inorder
+    # inorder_arr = []
+    _inorder(@root, [])
+  end
+
+  def preorder
+    _preorder(@root, [])
+  end
+
+  def postorder
+    _postorder(@root, [])
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -82,6 +108,31 @@ class Tree
   end
 
   private
+
+  # def _depth(search_val, node)
+  #   return 0 if search_val == node.data
+  # end
+
+  def _inorder(node, arr)
+    _inorder(node.left, arr) unless node.left.nil?
+    arr.push(node.data)
+    _inorder(node.right, arr) unless node.right.nil?
+    arr
+  end
+
+  def _preorder(node, arr)
+    arr.push(node.data)
+    _preorder(node.left, arr) unless node.left.nil?
+    _preorder(node.right, arr) unless node.right.nil?
+    arr
+  end
+
+  def _postorder(node, arr)
+    _postorder(node.left, arr) unless node.left.nil?
+    _postorder(node.right, arr) unless node.right.nil?
+    arr.push(node.data)
+    arr
+  end
 
   def _insert(new_node, parent_node = @root)
     if new_node.data > parent_node.data
@@ -114,11 +165,17 @@ end
 
 test = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 # test = Tree.new
-p = test.find(67)
-puts p
+p_node = test.find(6345)
+puts p_node
 
 test.pretty_print
-puts test.level_order
+p test.level_order
+p test.inorder
+p test.preorder
+p test.postorder
+
+puts test.depth(p_node)
+
 puts test.height
 
 test.delete(7)
