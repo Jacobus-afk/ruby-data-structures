@@ -30,10 +30,7 @@ def check_for_end_position(current_position, end_position)
 end
 
 def generate_knight_moves(base_move, end_position, start_position, found_end)
-  # return if $end_flag
-
   basemove_pos = base_move.position
-  # return if check_for_end_position(basemove_pos, end_position)
 
   POSSIBLE_MOVES.each do |possible_move|
     # https://stackoverflow.com/questions/1009280/how-do-i-perform-vector-addition-in-ruby
@@ -44,9 +41,8 @@ def generate_knight_moves(base_move, end_position, start_position, found_end)
     base_move.moves.push(new_move)
     next unless check_for_end_position(new_move.position, end_position)
 
-    found_end.append(new_move) # unless found_end != []
+    found_end.append(new_move) unless found_end != []
     return true
-    # move_knight(new_move, end_position, start_position)
   end
   nil
 end
@@ -55,9 +51,11 @@ def knight_recurser(base_node, end_position, start_position, found_end)
   return if $end_flag
 
   base_node.moves.each do |move|
-    unless generate_knight_moves(move, end_position, start_position, found_end)
-      knight_recurser(move, end_position, start_position, found_end)
-    end
+    generate_knight_moves(move, end_position, start_position, found_end)
+  end
+
+  base_node.moves.each do |move|
+    knight_recurser(move, end_position, start_position, found_end)
   end
 end
 
@@ -70,15 +68,8 @@ def knight_moves(start_position, end_position)
   unless generate_knight_moves(base_move, end_position, start_position, found_end)
     knight_recurser(base_move, end_position, start_position, found_end)
   end
-  # move_array = base_move
-  # until found_end
-  #   move_array.moves.each do |move|
-  #     found_end = generate_knight_moves(move, end_position, start_position)
-  #     break if found_end
-  #   end
-  # end
-  pass
+
+  puts
 end
 
-# puts valid_move([0, 7])
-knight_moves([3, 3], [4, 3])
+knight_moves([0, 0], [3, 3])
