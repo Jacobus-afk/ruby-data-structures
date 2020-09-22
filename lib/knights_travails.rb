@@ -22,11 +22,11 @@ end
 
 def print_shortest_path(base_move, end_position); end
 
-def check_for_end_position(current_position, end_position)
-  return unless current_position == end_position # == []
+def check_for_end_position(current, end_position, found_end)
+  return unless current.position == end_position
 
   $end_flag = true
-  true
+  found_end.append(current) unless found_end != [] # only add first path to end position
 end
 
 def generate_knight_moves(base_move, end_position, start_position, found_end)
@@ -39,12 +39,8 @@ def generate_knight_moves(base_move, end_position, start_position, found_end)
 
     new_move = Node.new(move_attempt, base_move)
     base_move.moves.push(new_move)
-    next unless check_for_end_position(new_move.position, end_position)
-
-    found_end.append(new_move) unless found_end != []
-    return true
+    check_for_end_position(new_move, end_position, found_end)
   end
-  nil
 end
 
 def knight_recurser(base_node, end_position, start_position, found_end)
@@ -53,7 +49,7 @@ def knight_recurser(base_node, end_position, start_position, found_end)
   base_node.moves.each do |move|
     generate_knight_moves(move, end_position, start_position, found_end)
   end
-
+  # two separate loops so that we can traverse breadth first
   base_node.moves.each do |move|
     knight_recurser(move, end_position, start_position, found_end)
   end
@@ -65,11 +61,10 @@ def knight_moves(start_position, end_position)
   base_move = Node.new(start_position)
 
   found_end = []
-  unless generate_knight_moves(base_move, end_position, start_position, found_end)
-    knight_recurser(base_move, end_position, start_position, found_end)
-  end
+  generate_knight_moves(base_move, end_position, start_position, found_end)
+  knight_recurser(base_move, end_position, start_position, found_end)
 
   puts
 end
 
-knight_moves([0, 0], [3, 3])
+knight_moves([3, 3], [4, 3])
